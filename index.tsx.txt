@@ -1,0 +1,164 @@
+import React, { useState } from "react";
+import { createRoot } from "react-dom/client";
+import { GoogleGenAI, Type } from "@google/genai";
+
+interface Trail {
+  name: string;
+  description: string;
+  difficulty: "Easy" | "Moderate" | "Hard";
+  length: string;
+  elevation_gain: string;
+}
+
+const App = () => {
+  const [location, setLocation] = useState("");
+  const [trails, setTrails] = useState<Trail[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const findTrails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!location) {
+      setError("Please enter a location to search for trails.");
+      return;
+    }
+
+    setIsLoading(true);
+    setTrails([]);
+    setError(null);
+
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+      
+      const trailSchema = {
+        type: Type.OBJECT,
+        properties: {
+          name: { type: Type.STRING, description: "Name of the hiking trail." },
+          description: { type: Type.STRING, description: "A brief, engaging description of the trail." },
+          difficulty: { type: Type.STRING, description: "Difficulty (Easy, Moderate, Hard)." },
+          length: { type: Type.STRING, description: "Total length of the trail (e.g., '5.2 miles')." },
+          elevation_gain: { type: Type.STRING, description: "Total elevation gain (e.g., '1200 ft')." },
+        },
+        required: ["name", "description", "difficulty", "length", "elevation_gain"]
+      };
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Find 5 popular hiking trails in or near ${location}.`,
+        config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                    trails: {
+                        type: Type.ARRAY,
+                        items: trailSchema
+                    }
+                }
+            }
+        }
+      });
+      
+      const responseText = response.text.trim();
+      // The API can sometimes wrap the JSON in markdown backticks.
+      // This regex extracts the pure JSON string before parsing.
+      const jsonRegex = /```json\s*([\s\S]*?)\s*```/;
+      const match = responseText.match(jsonRegex);
+      const jsonString = match ? match[1] : responseText;
+
+      const result = JSON.parse(jsonString);
+
+      if (result.trails && result.trails.length > 0) {
+        setTrails(result.trails);
+      } else {
+        setError(`No trails found for "${location}". Try a different location.`);
+      }
+
+    } catch (err) {
+      console.error("API Error or JSON Parsing Error:", err);
+      setError("Sorry, something went wrong while fetching trails. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const getDifficultyClass = (difficulty: string) => {
+    if (!difficulty) return 'Moderate';
+    const d = difficulty.toLowerCase();
+    if (d.includes('easy')) return 'Easy';
+    if (d.includes('moderate')) return 'Moderate';
+    if (d.includes('hard') || d.includes('difficult')) return 'Hard';
+    return 'Moderate'; // Default
+  }
+
+  const handleGetDirections = (trailName: string) => {
+    const destination = encodeURIComponent(`${trailName}, ${location}`);
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <div className="container">
+      <header>
+        <h1>Trail Finder</h1>
+        <p>Discover your next adventure. Enter a location to find hiking trails.</p>
+      </header>
+
+      <form className="search-form" onSubmit={findTrails}>
+        <input
+          type="text"
+          className="location-input"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="e.g., Yosemite National Park"
+          aria-label="Location"
+          disabled={isLoading}
+        />
+        <button type="submit" className="search-button" disabled={isLoading}>
+          {isLoading ? "Searching..." : "Find Trails"}
+        </button>
+      </form>
+
+      {isLoading && <div className="loader" aria-label="Loading trails"></div>}
+
+      {error && <div className="error-message" role="alert">{error}</div>}
+
+      {trails.length > 0 && (
+        <div className="trails-grid">
+          {trails.map((trail, index) => (
+            <div key={index} className="trail-card">
+              <h2>{trail.name}</h2>
+              <p className="description">{trail.description}</p>
+              <div className="trail-details">
+                <div className="detail-item">
+                  <span className={`difficulty-badge difficulty-${getDifficultyClass(trail.difficulty)}`}>
+                    {trail.difficulty}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <strong>Length:</strong> {trail.length}
+                </div>
+                <div className="detail-item">
+                  <strong>Elevation:</strong> {trail.elevation_gain}
+                </div>
+              </div>
+              <div className="card-actions">
+                <button
+                  className="directions-button"
+                  onClick={() => handleGetDirections(trail.name)}
+                  aria-label={`Get directions to ${trail.name}`}
+                >
+                  Get Directions
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const container = document.getElementById("root");
+const root = createRoot(container!);
+root.render(<App />);

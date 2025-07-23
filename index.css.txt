@@ -1,0 +1,220 @@
+:root {
+  --primary-green: #2E7D32;
+  --primary-green-dark: #1B5E20;
+  --background-color: #F8F9FA;
+  --card-background: #FFFFFF;
+  --text-color: #333;
+  --light-gray: #E0E0E0;
+  --border-radius: 12px;
+  --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+  --difficulty-easy: #4CAF50;
+  --difficulty-moderate: #FF9800;
+  --difficulty-hard: #F44336;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-green);
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+}
+
+.location-input {
+  flex-grow: 1;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--light-gray);
+  border-radius: var(--border-radius) 0 0 var(--border-radius);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.location-input:focus {
+  border-color: var(--primary-green);
+}
+
+.search-button {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--primary-green);
+  color: white;
+  border: none;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover:not(:disabled) {
+  background-color: var(--primary-green-dark);
+}
+
+.search-button:disabled {
+  background-color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+.loader {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(0,0,0,0.1);
+  border-left-color: var(--primary-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-top: 2rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: var(--difficulty-hard);
+  background-color: #FEEBEE;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+}
+
+.trails-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.trail-card {
+  background: var(--card-background);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.trail-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.trail-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary-green);
+}
+
+.trail-card .description {
+  margin-bottom: 1rem;
+  color: #555;
+  flex-grow: 1; /* Allows description to take up space */
+}
+
+.trail-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  border-top: 1px solid var(--light-gray);
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto; /* Pushes actions to the bottom */
+}
+
+.directions-button {
+  background-color: transparent;
+  border: 2px solid var(--primary-green);
+  color: var(--primary-green);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.directions-button:hover {
+  background-color: var(--primary-green);
+  color: white;
+}
+
+
+.difficulty-badge {
+  padding: 0.25em 0.75em;
+  border-radius: 1em;
+  font-weight: 600;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.difficulty-Easy { background-color: var(--difficulty-easy); }
+.difficulty-Moderate { background-color: var(--difficulty-moderate); }
+.difficulty-Hard { background-color: var(--difficulty-hard); }
+
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 2.5rem;
+  }
+  .search-form {
+    flex-direction: column;
+  }
+  .location-input, .search-button {
+    border-radius: var(--border-radius);
+  }
+}

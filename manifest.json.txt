@@ -1,0 +1,16 @@
+{
+  "short_name": "Trail Finder",
+  "name": "Trail Finder",
+  "description": "Discover your next adventure. Enter a location to find hiking trails.",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg width='512' height='512' viewBox='0 0 512 512' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M149.333 416H362.667L256 218.667L149.333 416Z' fill='%231B5E20'/%3E%3Cpath d='M293.333 416H426.667L320 218.667L293.333 416Z' fill='%232E7D32'/%3E%3Cpath d='M85.3333 416H218.667L152 298.667L85.3333 416Z' fill='%234CAF50'/%3E%3Cpath d='M202.667 192L256 96L309.333 192L282.667 154.667L256 128L229.333 154.667L202.667 192Z' fill='white'/%3E%3C/svg%3E",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2E7D32",
+  "background_color": "#F8F9FA"
+}

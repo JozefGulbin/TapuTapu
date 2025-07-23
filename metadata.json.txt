@@ -1,0 +1,5 @@
+{
+  "name": "TapuTapu Hike Trails",
+  "description": "An AI-powered app to discover hiking trails that can be installed on your device and works offline.",
+  "requestFramePermissions": []
+}
